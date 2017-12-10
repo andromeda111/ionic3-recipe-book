@@ -11,9 +11,8 @@ import { ShoppingListPage } from '../pages/shopping-list/shopping-list';
 import { RecipePage } from '../pages/recipe/recipe';
 import { RecipesPage } from '../pages/recipes/recipes';
 import { TabsPage } from '../pages/tabs/tabs';
-
-// Models
-import { Ingredient } from "../models/ingredient";
+import { SigninPage } from '../pages/signin/signin';
+import { SignupPage } from '../pages/signup/signup';
 
 // Services
 import { ShoppingListService } from "../services/shopping-list";
@@ -26,7 +25,9 @@ import { RecipesService } from "../services/recipes";
     RecipePage,
     RecipesPage,
     ShoppingListPage,
-    TabsPage
+    TabsPage,
+    SigninPage,
+    SignupPage
   ],
   imports: [
     BrowserModule,
@@ -39,7 +40,9 @@ import { RecipesService } from "../services/recipes";
     RecipePage,
     RecipesPage,
     ShoppingListPage,
-    TabsPage
+    TabsPage,
+    SigninPage,
+    SignupPage
   ],
   providers: [
     StatusBar,
