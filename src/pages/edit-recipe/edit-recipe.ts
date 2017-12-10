@@ -3,6 +3,7 @@ import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 
 @Component({
   selector: 'page-edit-recipe',
@@ -15,8 +16,8 @@ export class EditRecipePage implements OnInit {
 
   constructor(private navParams: NavParams,
               private actionSheetController: ActionSheetController,
-              private alertCtrl: AlertController) {
-
+              private alertCtrl: AlertController,
+              private toastCtrl: ToastController) {
   }
 
   ngOnInit() {
@@ -49,6 +50,12 @@ export class EditRecipePage implements OnInit {
               for (let i = len - 1; i >= 0; i--) {
                 fArray.removeAt(i);  
               }
+              const toast = this.toastCtrl.create({
+                message: 'All ingredients were removed',
+                duration: 1500,
+                position: 'bottom'
+              });
+              toast.present();
             }
           }
         },
@@ -79,10 +86,22 @@ export class EditRecipePage implements OnInit {
           text: 'Add',
           handler: data => {
             if (data.name.trim() == '' || data.name == null) {
+              const toast = this.toastCtrl.create({
+                message: 'Please enter a valid value',
+                duration: 1500,
+                position: 'bottom'
+              });
+              toast.present();
               return;
             }
             (<FormArray>this.recipeForm.get('ingredients'))
               .push(new FormControl(data.name, Validators.required));
+              const toast = this.toastCtrl.create({
+                message: 'Item added',
+                duration: 1500,
+                position: 'bottom'
+              });
+              toast.present();
           }
         }
       ]
