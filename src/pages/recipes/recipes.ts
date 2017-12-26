@@ -4,6 +4,11 @@ import { EditRecipePage } from '../edit-recipe/edit-recipe';
 import { Recipe } from '../../models/recipe';
 import { RecipesService } from '../../services/recipes';
 import { RecipePage } from '../recipe/recipe';
+import { PopoverController } from 'ionic-angular/components/popover/popover-controller';
+import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
+import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+import { DatabaseOptionsPage } from '../database-options/database-options';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'page-recipes',
@@ -13,7 +18,11 @@ export class RecipesPage {
   recipes: Recipe[];
 
   constructor(private navCtrl: NavController,
-              private recipesService: RecipesService) {}
+              private recipesService: RecipesService,
+              private popoverCtrl: PopoverController,
+              private loadingCtrl: LoadingController,
+              private alertCtrl: AlertController,
+              private authService: AuthService) {}
 
   ionViewWillEnter() {
     this.recipes = this.recipesService.getRecipes();
@@ -27,4 +36,58 @@ export class RecipesPage {
     this.navCtrl.push(RecipePage, {recipe, index});
   }
 
+  onShowOptions(event: MouseEvent) {
+    const loading = this.loadingCtrl.create({
+      content: 'Please wait...'
+    });
+    const popover = this.popoverCtrl.create(DatabaseOptionsPage);
+    popover.present({ev: event});
+    popover.onDidDismiss(
+      data => {
+        if (data.action == 'load') {
+          loading.present();
+          this.authService.getActiveUser().getIdToken()
+          .then(
+            (token: string) => {
+              this.recipesService.fetchList(token)
+                .subscribe((list: Recipe[]) => {
+                  loading.dismiss();
+                  if (list) {
+                    this.recipes = list;
+                  } else {
+                    this.recipes = [];
+                  }
+                }, error => {
+                  loading.dismiss();
+                  this.handleError(error.message);
+                })
+            }
+          )
+        } else if (data.action == 'store') {
+          loading.present()
+          this.authService.getActiveUser().getIdToken()
+            .then(
+              (token: string) => {
+                this.recipesService.storeList(token)
+                  .subscribe(() => {
+                    loading.dismiss();
+                  }, error => {
+                    loading.dismiss();
+                    this.handleError(error.message);
+                  })
+              }
+            )
+        }
+      }
+    )
+  }
+
+  private handleError(errorMessage: string) {
+    const alert = this.alertCtrl.create({
+      title: 'An error occured!',
+      message: errorMessage,
+      buttons: ['Ok']
+    })
+    alert.present();
+  }
 }

@@ -13,8 +13,6 @@ export class ShoppingListService {
     
     addItem(name: string, amount: number) {
         this.ingredients.push(new Ingredient(name, amount));
-        console.log(this.ingredients);
-        
     }
 
     addItems(items: Ingredient[]) {
@@ -36,8 +34,13 @@ export class ShoppingListService {
 
     fetchList(token: string) {
         const userId = this.authService.getActiveUser().uid;        
-        return this.http.get('https://ionic2-recipe-book-82ac5.firebaseio.com/' + userId + '/shopping-list.json?auth=' + token).do((data: Ingredient[]) => {
-               this.ingredients = data;
+        return this.http.get('https://ionic2-recipe-book-82ac5.firebaseio.com/' + userId + '/shopping-list.json?auth=' + token)
+            .do((data: Ingredient[]) => {
+                if (data) {
+                    this.ingredients = data;
+                } else {
+                    this.ingredients = [];
+                }
             });
     }
 }

@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ShoppingListService } from '../../services/shopping-list';
 import { Ingredient } from '../../models/ingredient';
 import { PopoverController } from 'ionic-angular/components/popover/popover-controller';
-import { SLOptionsPage } from './sl-options/sl-options';
+import { DatabaseOptionsPage } from '../database-options/database-options';
 import { AuthService } from '../../services/auth';
 import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
@@ -40,7 +40,7 @@ export class ShoppingListPage {
     const loading = this.loadingCtrl.create({
       content: 'Please wait...'
     });
-    const popover = this.popoverCtrl.create(SLOptionsPage);
+    const popover = this.popoverCtrl.create(DatabaseOptionsPage);
     popover.present({ev: event});
     popover.onDidDismiss(
       data => {
@@ -55,7 +55,7 @@ export class ShoppingListPage {
                   if (list) {
                     this.listItems = list;
                   } else {
-                    console.log('nothing loaded');
+                    this.listItems = [];
                   }
                 }, error => {
                   loading.dismiss();
